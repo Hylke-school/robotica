@@ -1,4 +1,4 @@
-$(document).ready(includeHTML);
+$(window).ready(includeHTML);
 
 function includeHTML() {
     var z, i, elmnt, file, xhttp;
