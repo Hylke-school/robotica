@@ -1,6 +1,4 @@
-document.onload = (event) => {
-    includeHTML();
-}
+$(document).ready(includeHTML);
 
 function includeHTML() {
     var z, i, elmnt, file, xhttp;
