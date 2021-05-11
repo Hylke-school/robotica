@@ -20,6 +20,10 @@ char pass[] = "oboRacit";        // your network password
 int status = WL_IDLE_STATUS;     // the Wifi radio's status
 
 char server[] = "141.252.29.5";
+int port = 80;
+
+int potPin = A0;
+int sensorVal = 0;
 
 // Initialize the Ethernet client object
 WiFiEspClient client;
@@ -32,6 +36,8 @@ void setup()
   Serial1.begin(9600);
   // initialize ESP module
   WiFi.init(&Serial1);
+
+  printHWInfo();
 
   // check for the presence of the shield
   if (WiFi.status() == WL_NO_SHIELD) {
@@ -52,38 +58,26 @@ void setup()
   Serial.println("You're connected to the network");
   
   printWifiStatus();
+  client.connect(server, port);
 
-  Serial.println();
-  Serial.println("Starting connection to server...");
-  // if you get a connection, report back via serial
-  if (client.connect(server, 80)) {
-    Serial.println("Connected to server");
-    // Make a HTTP request
-    client.println("SENSOR-JSON: {object:[sensor1]}");
-    client.println("Host: localhost");
-    client.println("Connection: close");
-    client.println();
-  }
+//  Serial.println();
+//  Serial.println("Starting connection to server...");
+//  // if you get a connection, report back via serial
+//  if (client.connect(server, 80)) {
+//    Serial.println("Connected to server");
+//    // Make a HTTP request
+//    client.println("SENSOR-JSON: {object:[sensor1]}");
+//    client.println("Host: localhost");
+//    client.println("Connection: close");
+//    client.println();
+//  }
 }
 
 void loop()
 {
-  // if there are incoming bytes available
-  // from the server, read them and print them
-  while (client.available()) {
-    char c = client.read();
-    Serial.write(c);
-  }
-
-  // if the server's disconnected, stop the client
-  if (!client.connected()) {
-    Serial.println();
-    Serial.println("Disconnecting from server...");
-    client.stop();
-
-    // do nothing forevermore
-    while (true);
-  }
+  sensorVal = analogRead(potPin);
+  client.println("{'pot': " + (String)sensorVal + "}"); 
+  delay(10);  
 }
 
 
@@ -92,6 +86,14 @@ void printWifiStatus()
   // print the SSID of the network you're attached to
   Serial.print("SSID: ");
   Serial.println(WiFi.SSID());
+
+  // print the MAC address of the router you're attached to
+  byte bssid[6];
+  WiFi.BSSID(bssid);
+  char buf[20];
+  sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X", bssid[5], bssid[4], bssid[3], bssid[2], bssid[1], bssid[0]);
+  Serial.print("BSSID: ");
+  Serial.println(buf);
 
   // print your WiFi shield's IP address
   IPAddress ip = WiFi.localIP();
@@ -103,4 +105,15 @@ void printWifiStatus()
   Serial.print("Signal strength (RSSI):");
   Serial.print(rssi);
   Serial.println(" dBm");
+}
+
+void printHWInfo()
+{
+  // print your MAC address
+  byte mac[6];
+  WiFi.macAddress(mac);
+  char buf[20];
+  sprintf(buf, "%02X:%02X:%02X:%02X:%02X:%02X", mac[5], mac[4], mac[3], mac[2], mac[1], mac[0]);
+  Serial.print("MAC address: ");
+  Serial.println(buf);
 }
