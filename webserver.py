@@ -12,7 +12,8 @@ sock.listen(1)
 conn, addr = sock.accept()
 print('Connection address:', addr)
 while 1:
-    data = conn.recv(buffer_size)
-    if not data: break
-    print(data)
+    while 1:
+        data = conn.recv(buffer_size)
+        if not data: break
+        print(data)
 conn.close()
