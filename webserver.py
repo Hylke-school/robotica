@@ -6,7 +6,7 @@ port = 5535
 buffer_size = 4096
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.bind((sock.gethostname(), port))
+sock.bind((ip, port))
 sock.listen(1)
 
 # print('Connection address:', ip)
