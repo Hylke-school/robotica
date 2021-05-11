@@ -1,7 +1,7 @@
 # Python 3 server example
 import socket
 
-global sock
+sock = None
 
 
 def receive_socket():
@@ -9,6 +9,7 @@ def receive_socket():
     port = 5535
     buffer_size = 4096
 
+    global sock
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.bind((ip, port))
     sock.listen(1)
