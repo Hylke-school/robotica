@@ -14,6 +14,7 @@ while True:
     conn, addr = sock.accept()
     while True:
         data = conn.recv(buffer_size)
+        data = str(data)
         # if not data: break
         print(data)
 
