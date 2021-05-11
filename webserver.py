@@ -1,29 +1,18 @@
 # Python 3 server example
-from http.server import BaseHTTPRequestHandler, HTTPServer
-import time
+import socket
 
-hostName = "141.252.29.5"
-serverPort = 80
+ip = "141.252.29.5"
+port = 80
+buffer_size = 20
 
-class MyServer(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.send_header("Content-type", "text/html")
-        self.end_headers()
-        self.wfile.write(bytes("<html><head><title>https://pythonbasics.org</title></head>", "utf-8"))
-        self.wfile.write(bytes("<p>Request: %s</p>" % self.path, "utf-8"))
-        self.wfile.write(bytes("<body>", "utf-8"))
-        self.wfile.write(bytes("<p>This is an example web server.</p>", "utf-8"))
-        self.wfile.write(bytes("</body></html>", "utf-8"))
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+sock.bind((ip, port))
+sock.listen(1)
 
-if __name__ == "__main__":        
-    webServer = HTTPServer((hostName, serverPort), MyServer)
-    print("Server started http://%s:%s" % (hostName, serverPort))
-
-    try:
-        webServer.serve_forever()
-    except KeyboardInterrupt:
-        pass
-
-    webServer.server_close()
-    print("Server stopped.")
+conn, addr = sock.accept()
+print('Connection address:', addr)
+while 1:
+    data = conn.recv(buffer_size)
+    if not data: break
+    print(data)
+conn.close()
