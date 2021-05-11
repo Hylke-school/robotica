@@ -2,18 +2,19 @@
 import socket
 
 ip = "141.252.29.5"
-port = 80
-buffer_size = 20
+port = 5535
+buffer_size = 4096
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-sock.bind((ip, port))
+sock.bind((sock.gethostname(), port))
 sock.listen(1)
 
-conn, addr = sock.accept()
-print('Connection address:', addr)
-while 1:
-    while 1:
+# print('Connection address:', ip)
+while True:
+    conn, addr = sock.accept()
+    while True:
         data = conn.recv(buffer_size)
-        if not data: break
+        # if not data: break
         print(data)
+
 conn.close()
