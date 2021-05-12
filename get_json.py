@@ -1,4 +1,4 @@
-from receive_remote.py import MySocket
+from receive_remote import MySocket
 
 ip = "141.252.29.5"
 port = 5535
