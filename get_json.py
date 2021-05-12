@@ -12,3 +12,6 @@ class JSON:
     def get_json(self):
         self.data = self.socket.get_data()
         return self.data
+
+
+print(JSON().get_json())
