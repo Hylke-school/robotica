@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Telemetrie Wall-DI</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+<p id="pot"></p>
+</body>
+
+<script>
+    let interval;
+    $(document).ready(function (){
+        interval = window.setInterval(function(){
+            $.get("141.252.29.5:5356", function(data, status){
+                const json = JSON.parse(data);
+                $("#pot").content = json.pot;
+            })
+        }, 100)
+    })
+</script>
+</html>
