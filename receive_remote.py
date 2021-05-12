@@ -18,8 +18,11 @@ class Socket:
 
     def get_data(self):
         data = self.conn.recv(self.buffer_size)
-        # print(data)
-        return data
+        start_index = data.rfind('{')
+        last_json = data[start_index:]
+        end_index = last_json.rfind('}')
+        return_data = last_json[:end_index]
+        return return_data
 
     def close_socket(self):
         print("Closing socket")
