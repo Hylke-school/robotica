@@ -17,7 +17,7 @@ class Server(BaseHTTPRequestHandler):
     # GET sends back a Hello world message
     def do_GET(self):
         self._set_headers()
-        self.wfile.write(json.get_json())
+        self.wfile.write(json.get_json().encode())
         # print(json.get_json())
 
 

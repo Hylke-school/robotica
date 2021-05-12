@@ -17,11 +17,11 @@ class Socket:
         self.conn, self.addr = self.sock.accept()
 
     def get_data(self):
-        data = self.conn.recv(self.buffer_size)
+        data = str(self.conn.recv(self.buffer_size))
         start_index = data.rfind('{')
         last_json = data[start_index:]
         end_index = last_json.rfind('}')
-        return_data = last_json[:end_index]
+        return_data = last_json[:end_index+1]
         return return_data
 
     def close_socket(self):
