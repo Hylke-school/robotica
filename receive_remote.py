@@ -21,5 +21,5 @@ class Socket:
         return data
 
     def close_socket(self):
-        print("Error detected, closing socket")
+        print("Closing socket")
         self.sock.close()

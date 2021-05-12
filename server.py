@@ -3,6 +3,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from get_json import JSON
 from sys import argv
 
+
 class Server(BaseHTTPRequestHandler):
     def _set_headers(self):
         self.send_response(200)
