@@ -13,5 +13,5 @@ class JSON:
         self.data = self.socket.get_data()
         return self.data
 
-
-print(JSON().get_json())
+while True:
+    print(JSON().get_json())
