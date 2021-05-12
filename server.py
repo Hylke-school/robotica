@@ -1,7 +1,7 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from get_json import JSON
-
+from sys import argv
 
 class Server(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -27,10 +27,7 @@ def run(server_class=HTTPServer, handler_class=Server, port=5356):
     httpd.serve_forever()
 
 
-if __name__ == "__main__":
-    from sys import argv
-
-    if len(argv) == 2:
-        run(port=int(argv[1]))
-    else:
-        run()
+if len(argv) == 2:
+    run(port=int(argv[1]))
+else:
+    run()
