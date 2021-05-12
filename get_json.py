@@ -1,6 +1,4 @@
 from receive_remote import Socket
-from get_json import JSON
-json = JSON()
 
 
 class JSON:
@@ -16,5 +14,6 @@ class JSON:
         return self.data
 
 
+json = JSON()
 while True:
     print(json.get_json())
