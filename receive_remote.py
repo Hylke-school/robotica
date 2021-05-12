@@ -14,9 +14,9 @@ class Socket:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.bind((self.ip, self.port))
         self.sock.listen(1)
-        self.conn, self.addr = self.sock.accept()
 
     def get_data(self):
+        self.conn, self.addr = self.sock.accept()
         data = self.conn.recv(self.buffer_size)
         return data
 
