@@ -13,7 +13,7 @@
     let interval;
     $(document).ready(function (){
         interval = window.setInterval(function(){
-            $.get("141.252.29.5:5356", function(data, status){
+            $.get("http://141.252.29.5:5356", function(data, status){
                 const json = JSON.parse(data);
                 $("#pot").content = json.pot;
             })
