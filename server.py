@@ -2,6 +2,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 
 from get_json import JSON
 from sys import argv
+json = JSON()
 
 
 class Server(BaseHTTPRequestHandler):
@@ -17,7 +18,7 @@ class Server(BaseHTTPRequestHandler):
     def do_GET(self):
         self._set_headers()
         # self.wfile.write(JSON().get_json())
-        print(JSON().get_json())
+        print(json.get_json())
 
 
 def run(server_class=HTTPServer, handler_class=Server, port=5356):
