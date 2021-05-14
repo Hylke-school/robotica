@@ -13,5 +13,5 @@ class JSON:
 
     def get_json(self):
         # self.data = self.socket.get_data()
-        self.data = "{\"pot\": " + random.randrange(0, 1023) + "}"
+        self.data = "{\"pot\": " + str(random.randrange(0, 1023)) + "}"
         return self.data
