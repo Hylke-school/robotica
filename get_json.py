@@ -1,3 +1,5 @@
+import random
+
 from receive_remote import Socket
 
 
@@ -11,5 +13,5 @@ class JSON:
 
     def get_json(self):
         # self.data = self.socket.get_data()
-        self.data = "{\"pot\": 200}"
+        self.data = "{\"pot\": " + random.randrange(0, 1023) + "}"
         return self.data
