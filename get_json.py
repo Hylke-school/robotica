@@ -6,8 +6,8 @@ class JSON:
         self.ip = "141.252.29.5"
         self.port = 5535
         self.data = None
-        self.socket = Socket(self.ip, self.port)
-        self.socket.connect_socket()
+        # self.socket = Socket(self.ip, self.port)
+        # self.socket.connect_socket()
 
     def get_json(self):
         # self.data = self.socket.get_data()
