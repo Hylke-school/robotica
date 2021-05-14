@@ -6,18 +6,12 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-<p id="pot"></p>
+
+<canvas id="myChart" width="200" height="100"></canvas>
+
 </body>
 
-<script>
-    let interval;
-    $(document).ready(function (){
-        interval = window.setInterval(function(){
-            $.get("http://141.252.29.5:5356", function(data, status){
-                const json = JSON.parse(data);
-                $("#pot").content = json.pot;
-            })
-        }, 100)
-    })
-</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/js/telemetrie.js"></script>
+
 </html>
