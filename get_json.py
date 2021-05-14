@@ -11,5 +11,5 @@ class JSON:
 
     def get_json(self):
         # self.data = self.socket.get_data()
-        self.data = "{'pot': 200}"
+        self.data = "{\"pot\": 200}"
         return self.data
