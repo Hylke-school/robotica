@@ -19,8 +19,8 @@ char ssid[] = "IDP-Robotica";            // your network SSID (name)
 char pass[] = "oboRacit";        // your network password
 int status = WL_IDLE_STATUS;     // the Wifi radio's status
 
-char server[] = "141.252.29.5";
-int port = 80;
+char server[] = "141.252.29.30";
+int port = 5535;
 
 int potPin = A0;
 int sensorVal = 0;
@@ -76,8 +76,10 @@ void setup()
 void loop()
 {
   sensorVal = analogRead(potPin);
-  client.println("{'pot': " + (String)sensorVal + "}"); 
-  delay(10);  
+  String sendValue = "{\"pot\": " + (String)sensorVal + "}";
+  client.print(sendValue);
+  client.flush();
+  delay(50);  
 }
 
 
