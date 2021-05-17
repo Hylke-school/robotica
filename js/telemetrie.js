@@ -33,7 +33,7 @@ let myChart = new Chart(ctx,
 
 interval = window.setInterval(function () {
     // TODO: set IP address back, this only works on local network right now
-    $.get("http://192.168.0.205:5356", function (data, status) {
+    $.get("http://141.252.29.30:5356", function (data, status) {
         // $("#pot").text(data.pot);
         myChart.data.labels[0] = counter;
         myChart.data.datasets.forEach((dataset) => {
