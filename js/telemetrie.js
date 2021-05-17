@@ -32,7 +32,7 @@ let myChart = new Chart(ctx,
 );
 
 interval = window.setInterval(function () {
-    $.get("https://141.252.29.30:5356", function (data, status) {
+    $.get("http://141.252.29.30:5356", function (data, status) {
         // $("#pot").text(data.pot);
         myChart.data.labels[0] = counter;
         myChart.data.datasets.forEach((dataset) => {
@@ -41,7 +41,7 @@ interval = window.setInterval(function () {
         myChart.update("");
     })
     counter++;
-    if (counter === 100) {
-        clearInterval(interval)
-    }
+    // if (counter === 100) {
+    //     clearInterval(interval)
+    // }
 }, 100)
