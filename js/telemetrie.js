@@ -23,7 +23,9 @@ const config = {
                 beginAtZero: true,
                 max: 1023
             }
-        }
+        },
+        responsive: true,
+        aspectRatio: 0.5
     },
 };
 
@@ -32,7 +34,7 @@ let myChart = new Chart(ctx,
 );
 
 interval = window.setInterval(function () {
-    $.get("http://141.252.29.30:5356", function (data, status) {
+    $.get("http://dns.hylke.xyz:5356", function (data, status) {
         // $("#pot").text(data.pot);
         myChart.data.labels[0] = counter;
         myChart.data.datasets.forEach((dataset) => {
