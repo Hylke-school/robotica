@@ -1,4 +1,5 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
+import ssl
 
 from get_json import JSON
 from sys import argv
@@ -26,6 +27,7 @@ class Server(BaseHTTPRequestHandler):
 def run(server_class=HTTPServer, handler_class=Server, port=5356):
     server_address = ('', port)
     httpd = server_class(server_address, handler_class)
+    httpd.socket = ssl.wrap_socket(httpd.socket)
 
     print('Starting httpd on port %d...' % port)
     httpd.serve_forever()
