@@ -27,7 +27,7 @@ class Socket:
 
     @staticmethod
     def get_data():
-        f = open("data.json")
+        f = open("data.json", "r")
         value = f.read()
         f.close()
         return value
