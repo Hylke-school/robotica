@@ -9,23 +9,24 @@ class Socket:
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((self.ip, self.port))
-        self.data = None
         self.thread = None
-        self.lock = Lock()
 
     def start_loop(self):
         self.thread = threading.Thread(target=self.loop)
 
     def loop(self):
         while True:
-            self.lock.acquire()
-            self.data, addr = self.sock.recvfrom(1024)
-            self.lock.release()
+            data, addr = self.sock.recvfrom(1024)
+            f = open("data.json")
+            f.write(data, "w")
+            f.close()
 
     def stop_loop(self):
         self.thread.join()
 
-    def get_data(self):
-        self.lock.acquire()
-        return self.data
-        self.lock.release()
+    @staticmethod
+    def get_data():
+        f = open("data.json")
+        value = f.read()
+        f.close()
+        return value
