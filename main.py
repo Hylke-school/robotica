@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import math
 
 def visiontest():
     cap = cv2.VideoCapture(0)
@@ -57,8 +58,64 @@ def blauwBlokje():
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
+def findCap():
+    cap = cv2.VideoCapture(0)
+
+    while(True):
+        _, frame = cap.read()
+        frame = cv2.flip(frame,1)
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        #edges ofzo
+        bilateral = cv2.bilateralFilter(frame, 5, 175, 175)
+        edges = cv2.Canny(bilateral, 75, 200)
+        contours,_ = cv2.findContours(edges, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+        cntlist = []
+        for cnt in contours:
+            perimeter = cv2.arcLength(cnt, True)
+            approx = cv2.approxPolyDP(cnt, 0.01*perimeter, True)
+            area = cv2.contourArea(cnt)
+            if perimeter ==0:
+                continue
+            factor = 4*math.pi*area/perimeter**2
+            if ((len(approx) > 8) & (area > 400) & (factor > 0.7)):
+                cntlist.append(cnt)
+        cv2.drawContours(frame, cntlist, -1, (255,0,0),2)
+
+        #hough circles
+        # circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1.2, 100)
+
+        # if circles is not None:
+        #     circles = np.round(circles[0, :]).astype("int")
+        #     for (x,y,r) in circles:
+        #         cv2.circle(frame, (x,y), r, (0,255,0),2)
+
+        #manual
+        # blur = cv2.GaussianBlur(gray, (9,9),0)
+
+        # _,th = cv2.threshold(blur, 100, 255, cv2.THRESH_BINARY_INV)
+        # contours, hierarchy = cv2.findContours(th, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        # for cnt in contours:
+        #     area = cv2.contourArea(cnt)
+        #     if area < 100:
+        #         continue
+        #     perimeter = cv2.arcLength(cnt, True)
+        #     if perimeter == 0:
+        #         continue
+        #     factor = 4 * math.pi * area / perimeter**2
+        #     if factor > 0.7:
+        #         cv2.drawContours(frame, cnt, -1, (255,0,0),2)
+        #     else:
+        #         cv2.drawContours(frame, cnt, -1, (0,255,0),2)
+
+        # cv2.imshow("gray",gray)
+        # cv2.imshow("threshold",th)
+        cv2.imshow('window', frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
+
 def main():
-    blauwBlokje()
+    findCap()
 
 if __name__ == "__main__":
     main()
