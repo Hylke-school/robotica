@@ -1,5 +1,6 @@
 import socket
 import threading
+from datetime import time
 from threading import Lock
 
 
@@ -27,6 +28,7 @@ class Socket:
 
     @staticmethod
     def get_data():
+        time.sleep(0.1)
         f = open("data.json", "r")
         value = f.read()
         f.close()
