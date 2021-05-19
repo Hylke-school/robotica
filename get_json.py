@@ -1,4 +1,4 @@
-import json
+from receive_remote import Socket
 
 
 class JSON:
@@ -7,20 +7,23 @@ class JSON:
         self.port = 5535
         self.data = None
         self.counter = 0
-        # self.socket = Socket(self.ip, self.port)
-        # self.socket.connect_socket()
+        self.socket = Socket(self.ip, self.port)
+        try:
+            self.socket.start_loop()
+        finally:
+            self.socket.stop_loop()
 
     def get_json(self):
-        # self.data = self.socket.get_data()
-        data = {
-            "joy1x": self.counter,
-            "joy1y": self.counter + 50,
-            "joy2x": self.counter + 100,
-            "joy2y": self.counter + 150
-        }
-        self.data = json.dumps(data)
-        if self.counter > 800:
-            self.counter = 0
-        else:
-            self.counter += 10
+        self.data = self.socket.get_data()
+        # data = {
+        #     "joy1x": self.counter,
+        #     "joy1y": self.counter + 50,
+        #     "joy2x": self.counter + 100,
+        #     "joy2y": self.counter + 150
+        # }
+        # self.data = json.dumps(data)
+        # if self.counter > 800:
+        #     self.counter = 0
+        # else:
+        #     self.counter += 10
         return self.data
