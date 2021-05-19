@@ -25,7 +25,6 @@ class Socket:
     def loop(self):
         while True:
             data, addr = self.sock.recvfrom(1024)
-            print(data)
             f = open("data.json", "w")
             f.write(data.decode('utf-8'))
             f.close()
