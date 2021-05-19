@@ -18,8 +18,8 @@ class Socket:
         while True:
             data, addr = self.sock.recvfrom(1024)
             print(data)
-            f = open("data.json")
-            f.write(data, "w")
+            f = open("data.json", "w")
+            f.write(data)
             f.close()
 
     def stop_loop(self):
