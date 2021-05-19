@@ -2,18 +2,24 @@ import socket
 import threading
 
 
+def get_data():
+    f = open("data.json", "r")
+    value = f.read()
+    f.close()
+    return value
+
+
 class Socket:
     def __init__(self, ip, port):
+        self.daemon = True
         self.ip = ip
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((self.ip, self.port))
-        self.thread = None
+        threading.Thread.__init__(self)
+        self.start()
 
-    def start_loop(self):
-        self.thread = threading.Thread(target=self.loop)
-
-    def loop(self):
+    def run(self):
         while True:
             data, addr = self.sock.recvfrom(1024)
             print(data)
@@ -22,10 +28,4 @@ class Socket:
             f.close()
 
     def stop_loop(self):
-        self.thread.join()
-
-    def get_data(self):
-        f = open("data.json", "r")
-        value = f.read()
-        f.close()
-        return value
+        self.join()
