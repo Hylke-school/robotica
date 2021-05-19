@@ -8,7 +8,7 @@ class Socket:
         self.ip = ip
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.sock.bind(self.ip, self.port)
+        self.sock.bind((self.ip, self.port))
         self.thread = None
 
     def start_loop(self):
