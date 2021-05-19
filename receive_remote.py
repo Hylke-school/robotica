@@ -19,7 +19,7 @@ class Socket:
             data, addr = self.sock.recvfrom(1024)
             print(data)
             f = open("data.json", "w")
-            f.write(data)
+            f.write(data.decode('utf-8'))
             f.close()
 
     def stop_loop(self):
