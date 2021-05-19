@@ -1,7 +1,5 @@
 import socket
 import threading
-from datetime import time
-from threading import Lock
 
 
 class Socket:
@@ -26,9 +24,7 @@ class Socket:
     def stop_loop(self):
         self.thread.join()
 
-    @staticmethod
-    def get_data():
-        time.sleep(0.1)
+    def get_data(self):
         f = open("data.json", "r")
         value = f.read()
         f.close()
