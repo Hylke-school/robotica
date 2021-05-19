@@ -8,7 +8,7 @@ class JSON:
         self.data = None
         self.counter = 0
         self.socket = Socket(self.ip, self.port)
-        self.socket.run()
+        self.socket.start_loop()
 
     def get_json(self):
         self.data = get_data()

@@ -16,10 +16,13 @@ class Socket:
         self.port = port
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((self.ip, self.port))
-        threading.Thread.__init__(self)
-        self.start()
+        self.thread = None
 
-    def run(self):
+    def start_loop(self):
+        self.thread = threading.Thread(target=self.loop, daemon=True)
+        self.thread.start()
+
+    def loop(self):
         while True:
             data, addr = self.sock.recvfrom(1024)
             print(data)
