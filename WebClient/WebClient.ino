@@ -7,7 +7,8 @@
  For more details see: http://yaab-arduino.blogspot.com/p/wifiesp-example-client.html
 */
 
-#include "WiFiEsp.h"
+#include <WiFiEsp.h>
+#include <WifiEspUdp.h>
 
 // Emulate Serial1 on pins 6/7 if not present
 #ifndef HAVE_HWSERIAL1
@@ -19,14 +20,18 @@ char ssid[] = "IDP-Robotica";            // your network SSID (name)
 char pass[] = "oboRacit";        // your network password
 int status = WL_IDLE_STATUS;     // the Wifi radio's status
 
-char server[] = "141.252.29.30";
+char server[] = "141.252.29.66";
 int port = 5535;
 
-int potPin = A0;
-int sensorVal = 0;
+int yPin = A0;
+int xPin = A1;
+
+String x;
+String y;
+String manual;
 
 // Initialize the Ethernet client object
-WiFiEspClient client;
+WiFiEspUDP Udp;
 
 void setup()
 {
@@ -56,30 +61,25 @@ void setup()
 
   // you're connected now, so print out the data
   Serial.println("You're connected to the network");
-  
   printWifiStatus();
-  client.connect(server, port);
 
-//  Serial.println();
-//  Serial.println("Starting connection to server...");
-//  // if you get a connection, report back via serial
-//  if (client.connect(server, 80)) {
-//    Serial.println("Connected to server");
-//    // Make a HTTP request
-//    client.println("SENSOR-JSON: {object:[sensor1]}");
-//    client.println("Host: localhost");
-//    client.println("Connection: close");
-//    client.println();
-//  }
+  Serial.println("\nStarting connection to server...");
+  // if you get a connection, report back via serial:
+  Udp.begin(port);
 }
+
 
 void loop()
 {
-  sensorVal = analogRead(potPin);
-  String sendValue = "{\"pot\": " + (String)sensorVal + "}";
-  client.print(sendValue);
-  client.flush();
-  delay(50);  
+  x = (String)analogRead(xPin);
+  y = (String)analogRead(yPin);
+  manual = "true";
+  String sendValue = "{\"manual\": "+manual+", \"joy1x\": "+x+", \"joy1y\":"+y+"}";
+  Serial.print("Sending info: "); Serial.println(sendValue);
+  Udp.beginPacket(server, port);
+  Udp.print(sendValue);
+  Udp.endPacket();
+//  delay(50);  
 }
 
 
@@ -99,8 +99,7 @@ void printWifiStatus()
 
   // print your WiFi shield's IP address
   IPAddress ip = WiFi.localIP();
-  Serial.print("IP Address: ");
-  Serial.println(ip);
+  Serial.print("IP Address: "); Serial.print(ip); Serial.print(":"); Serial.println(port);
 
   // print the received signal strength
   long rssi = WiFi.RSSI();
