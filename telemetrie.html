@@ -11,10 +11,15 @@
     <h1 class="h1 text-center">Telemetrie Wall-DI
         <button class="btn btn-primary" onclick="toggleController()">Controller</button>
         <button class="btn btn-primary" onclick="toggleRobot()">Robot</button>
+        <button class="btn btn-primary disabled" onclick="#toggleCamera()">Camera (WIP)</button>
     </h1>
     <h1 class="h1 text-center text-danger" style="display:none" id="automatic_message">De robot wordt automatisch
         bestuurd</h1>
     <h2 class="h2 text-center" style="display:none" id="mode_message"></h2>
+    <div id="camera" style="display:none">
+        <h2 class="h2">Camera Livestream</h2>
+        <img src="http://141.252.29.66:5000/video_feed">
+    </div>
     <div id="controller">
         <h2 class="h2">Controller Telemetrie</h2>
         <div class="row m-2" style="background-color:white">

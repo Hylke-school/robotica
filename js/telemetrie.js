@@ -93,3 +93,16 @@ function toggleRobot(){
 function toggleController(){
     $("#controller").toggle();
 }
+
+function toggleCamera(){
+    let display = $("#camera").css('display')
+    if (display === "none"){
+        $("#camera").show();
+        $("#camera").html(`
+            <h2 class="h2">Camera Livestream</h2>
+            <img src="http://141.252.29.66:5000/video_feed">
+        `)
+    } else {
+        $("#camera").hide();$("#camera").html("")
+    }
+}
