@@ -10,7 +10,7 @@ class JSON:
         self.socket.start_loop()
 
     def get_json(self):
-        data = get_data()
+        data = self.socket.get_data()
         # data = {
         #     "joy1x": self.counter,
         #     "joy1y": self.counter + 50,
