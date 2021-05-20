@@ -21,10 +21,10 @@ class Socket:
 
     def loop(self):
         while True:
-            data, addr = self.sock.recvfrom(1024)
-            self.lock.acquire()
-            self.data = data
-            self.lock.release()
+            self.data, addr = self.sock.recvfrom(1024)
+            # self.lock.acquire()
+            # self.data = data
+            # self.lock.release()
             # f = open("data.json", "w")
             # f.write(data.decode('utf-8'))
             # f.close()
@@ -33,10 +33,10 @@ class Socket:
         self.join()
 
     def get_data(self):
-        self.lock.acquire()
-        value = self.data
-        self.lock.release()
+        # self.lock.acquire()
+        # value = self.data
+        # self.lock.release()
         # f = open("data.json", "r")
         # value = f.read()
         # f.close()
-        return value
+        return self.data
