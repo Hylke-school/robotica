@@ -1,6 +1,5 @@
 import socket
 import threading
-from threading import Lock
 
 
 class Socket:
@@ -11,16 +10,16 @@ class Socket:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.bind((self.ip, self.port))
         self.thread = None
-        self.lock = Lock()
         self.data = None
+        self.looping = True
 
-    def start_loop(self, data):
-        self.thread = threading.Thread(target=self.loop, daemon=True, args=data)
+    def start_loop(self):
+        self.thread = threading.Thread(target=self.loop, daemon=True)
         self.thread.start()
 
-    def loop(self, data):
-        while True:
-            data = self.sock.recvfrom(1024)
+    def loop(self):
+        while self.looping:
+            self.data, addr = self.sock.recvfrom(1024)
             # self.lock.acquire()
             # self.data = data
             # self.lock.release()
@@ -32,10 +31,13 @@ class Socket:
         self.join()
 
     def get_data(self):
+        self.looping = False
+        data = self.data
+        self.looping = True
         # self.lock.acquire()
         # value = self.data
         # self.lock.release()
         # f = open("data.json", "r")
         # value = f.read()
         # f.close()
-        return self.data
+        return data
