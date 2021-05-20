@@ -29,11 +29,11 @@ class Socket:
         self.join()
 
     def get_data(self):
-        print(self.data)
+        data = self.data
         # f = open("data.json", "r")
         # value = f.read()
         # f.close()
         # self.locked = True
         # data = self.data
         # self.locked = False
-        return ""
+        return data
