@@ -3,7 +3,6 @@ import threading
 from threading import Lock
 
 
-
 class Socket:
     def __init__(self, ip, port):
         self.daemon = True
@@ -15,13 +14,13 @@ class Socket:
         self.lock = Lock()
         self.data = None
 
-    def start_loop(self):
-        self.thread = threading.Thread(target=self.loop, daemon=True)
+    def start_loop(self, data):
+        self.thread = threading.Thread(target=self.loop, daemon=True, args=data)
         self.thread.start()
 
-    def loop(self):
+    def loop(self, data):
         while True:
-            self.data, addr = self.sock.recvfrom(1024)
+            data = self.sock.recvfrom(1024)
             # self.lock.acquire()
             # self.data = data
             # self.lock.release()

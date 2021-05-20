@@ -8,10 +8,10 @@ class JSON:
         self.data = None
         self.counter = 0
         self.socket = Socket(self.ip, self.port)
-        self.socket.start_loop()
+        self.socket.start_loop(self.data)
 
     def get_json(self):
-        self.data = self.socket.get_data()
+        # self.data = self.socket.get_data()
         # data = {
         #     "joy1x": self.counter,
         #     "joy1y": self.counter + 50,
