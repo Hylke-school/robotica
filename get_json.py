@@ -5,13 +5,12 @@ class JSON:
     def __init__(self):
         self.ip = "141.252.29.66"
         self.port = 5535
-        self.data = None
         self.counter = 0
         self.socket = Socket(self.ip, self.port)
         self.socket.start_loop()
 
     def get_json(self):
-        self.data = self.socket.get_data()
+        data = self.socket.get_data()
         # data = {
         #     "joy1x": self.counter,
         #     "joy1y": self.counter + 50,
@@ -23,4 +22,4 @@ class JSON:
         #     self.counter = 0
         # else:
         #     self.counter += 10
-        return self.data
+        return data

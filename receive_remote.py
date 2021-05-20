@@ -18,14 +18,15 @@ class Socket:
         self.thread.start()
 
     def loop(self):
-        while self.looping:
-            self.data, addr = self.sock.recvfrom(1024)
-            # self.lock.acquire()
-            # self.data = data
-            # self.lock.release()
-            # f = open("data.json", "w")
-            # f.write(data.decode('utf-8'))
-            # f.close()
+        while True:
+            while self.looping:
+                self.data, addr = self.sock.recvfrom(1024)
+                # self.lock.acquire()
+                # self.data = data
+                # self.lock.release()
+                # f = open("data.json", "w")
+                # f.write(data.decode('utf-8'))
+                # f.close()
 
     def stop_loop(self):
         self.join()
