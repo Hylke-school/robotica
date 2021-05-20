@@ -16,11 +16,12 @@ chartList.push(makeChart("distance2"));
 
 interval = window.setInterval(function () {
     $.get("http://dns.hylke.xyz:5356", function (data, status) {
-        console.log(data);
-        if (!data.manual === "false"){
+        if (data.manual === "false"){
             $("body").css("background-color", "#ffaaaa");
             $("#automatic_message").show();
             $("#mode_message").show();
+            $("#controller").hide();
+            $("#robot").show();
         } else {
             $("body").css("background-color", "#ffffff");
             $("#automatic_message").hide();
@@ -33,10 +34,10 @@ interval = window.setInterval(function () {
             case "ld":
                 $("#mode_message").text("De line dance wordt uitgevoerd");
                 break;
-            case "trash":
+            case "tr":
                 $("#mode_message").text("De robot pakt nu afval op");
                 break;
-            case "vision":
+            case "vs":
                 $("#mode_message").text("De robot voert nu het vision onderdeel uit");
                 break;
         }
@@ -49,7 +50,7 @@ interval = window.setInterval(function () {
         });
         counter++;
     })
-}, 100)
+}, 50)
 
 function makeChart(element){
     let ctx = document.getElementById(element).getContext('2d');
