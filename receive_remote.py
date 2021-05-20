@@ -2,6 +2,16 @@ import socket
 import threading
 
 
+def get_data():
+    f = open("data.json", "r")
+    value = f.read()
+    f.close()
+    # self.locked = True
+    # data = self.data
+    # self.locked = False
+    return value
+
+
 class Socket:
     def __init__(self, ip, port):
         self.daemon = True
@@ -19,20 +29,11 @@ class Socket:
 
     def loop(self):
         while True:
-            if not self.locked:
-                self.data, addr = self.sock.recvfrom(1024)
-            # f = open("data.json", "w")
-            # f.write(data.decode('utf-8'))
-            # f.close()
+            # if not self.locked:
+            data, addr = self.sock.recvfrom(1024)
+            f = open("data.json", "w")
+            f.write(data.decode('utf-8'))
+            f.close()
 
     def stop_loop(self):
         self.join()
-
-    def get_data(self):
-        # f = open("data.json", "r")
-        # value = f.read()
-        # f.close()
-        self.locked = True
-        data = self.data
-        self.locked = False
-        return data

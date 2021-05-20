@@ -1,4 +1,4 @@
-from receive_remote import Socket
+from receive_remote import Socket, get_data
 
 
 class JSON:
@@ -10,7 +10,7 @@ class JSON:
         self.socket.start_loop()
 
     def get_json(self):
-        data = self.socket.get_data()
+        data = get_data()
         # data = {
         #     "joy1x": self.counter,
         #     "joy1y": self.counter + 50,
