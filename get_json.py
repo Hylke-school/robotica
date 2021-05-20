@@ -1,4 +1,4 @@
-from receive_remote import Socket, get_data
+from receive_remote import Socket
 
 
 class JSON:
