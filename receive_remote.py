@@ -20,10 +20,10 @@ class Socket:
     def loop(self):
         while True:
             # if not self.locked:
-            data, addr = self.sock.recvfrom(1024)
-            f = open("data.json", "w")
-            f.write(data.decode('utf-8'))
-            f.close()
+            self.data, addr = self.sock.recvfrom(1024)
+            # f = open("data.json", "w")
+            # f.write(data.decode('utf-8'))
+            # f.close()
 
     def stop_loop(self):
         self.join()
