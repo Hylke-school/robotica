@@ -8,20 +8,45 @@
 </head>
 <body>
 <div class="container" id="container">
-    <h1 class="h1 text-center" style="display:none" id="automatic_message">De robot wordt automatisch bestuurd</h1>
+    <h1 class="h1 text-center">Telemetrie Wall-DI
+        <button class="btn btn-primary" onclick="toggleController()">Controller</button>
+        <button class="btn btn-primary" onclick="toggleRobot()">Robot</button>
+    </h1>
+    <h1 class="h1 text-center text-danger" style="display:none" id="automatic_message">De robot wordt automatisch
+        bestuurd</h1>
     <h2 class="h2 text-center" style="display:none" id="mode_message"></h2>
-    <div class="row">
-        <div class="col-3">
-            <canvas id="joy1x" width="auto" height="auto"></canvas>
+    <div id="controller">
+        <h2 class="h2">Controller Telemetrie</h2>
+        <div class="row m-2" style="background-color:white">
+            <div class="col-3">
+                <canvas id="joy1x"></canvas>
+            </div>
+            <div class="col-3">
+                <canvas id="joy1y"></canvas>
+            </div>
+            <div class="col-3">
+                <canvas id="joy2x"></canvas>
+            </div>
+            <div class="col-3">
+                <canvas id="joy2y"></canvas>
+            </div>
         </div>
-        <div class="col-3">
-            <canvas id="joy1y"></canvas>
-        </div>
-        <div class="col-3">
-            <canvas id="joy2x"></canvas>
-        </div>
-        <div class="col-3">
-            <canvas id="joy2y"></canvas>
+    </div>
+    <div style="display:none" id="robot">
+        <h2 class="h2">Robot Telemetrie</h2>
+        <div class="row m-2" style="background-color:white;">
+            <div class="col-3">
+                <canvas id="thread1"></canvas>
+            </div>
+            <div class="col-3">
+                <canvas id="thread2"></canvas>
+            </div>
+            <div class="col-3">
+                <canvas id="distance1"></canvas>
+            </div>
+            <div class="col-3">
+                <canvas id="distance2"></canvas>
+            </div>
         </div>
     </div>
 </div>

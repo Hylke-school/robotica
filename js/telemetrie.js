@@ -7,18 +7,22 @@ chartList.push(makeChart("joy1x"));
 chartList.push(makeChart("joy1y"));
 chartList.push(makeChart("joy2x"));
 chartList.push(makeChart("joy2y"));
+chartList.push(makeChart("thread1"));
+chartList.push(makeChart("thread2"));
+chartList.push(makeChart("distance1"));
+chartList.push(makeChart("distance2"));
 
 
 
 interval = window.setInterval(function () {
     $.get("http://dns.hylke.xyz:5356", function (data, status) {
-        data.manual = false;
-        if (!data.manual){
-            $("body").css("background-color", "#ff0000");
+        console.log(data);
+        if (!data.manual === "false"){
+            $("body").css("background-color", "#ffaaaa");
             $("#automatic_message").show();
             $("#mode_message").show();
         } else {
-            $("body").css("background-color", "#000000");
+            $("body").css("background-color", "#ffffff");
             $("#automatic_message").hide();
             $("#mode_message").hide();
         }
@@ -39,7 +43,7 @@ interval = window.setInterval(function () {
         chartList.forEach((chart) => {
             chart.data.labels[0] = counter;
             chart.data.datasets.forEach((dataset) => {
-                dataset.data[0] = data[chart.data.datasets.label];
+                dataset.data[0] = data[dataset.label];
             })
             chart.update();
         });
@@ -79,4 +83,12 @@ function makeChart(element){
 
     let returnChart = new Chart(ctx, config);
     return returnChart;
+}
+
+function toggleRobot(){
+    $("#robot").toggle();
+}
+
+function toggleController(){
+    $("#controller").toggle();
 }
