@@ -21,7 +21,7 @@ char pass[] = "oboRacit";        // your network password
 int status = WL_IDLE_STATUS;     // the Wifi radio's status
 
 char server[] = "141.252.29.66";
-int port = 5535;
+int port = 5355;
 
 int yPin = A0;
 int xPin = A1;
