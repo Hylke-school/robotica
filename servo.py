@@ -8,15 +8,17 @@ from dynamixel_sdk import *
 
 portName = '/dev/ttyAMA0'
 
+
 def sendPacket(self, port, txpacket):
     rxpacket = 0
     error = 0
-    #GPIO FIXEN! EIGEN RXTXPACKET MAKEN
-
+    # GPIO FIXEN! EIGEN RXTXPACKET MAKEN
 
 
 baudrates = [1000000, 500000, 400000, 250000, 200000, 115200, 57600, 19200, 9600]
-#ongetest! Wees voorzichtig!
+
+
+# ongetest! Wees voorzichtig!
 def main():
     port = PortHandler(portName)
     packet = PacketHandler(1.0)
@@ -32,7 +34,7 @@ def main():
     else:
         print("baudrate failed")
         quit()
-    
+
     model_number, comm_result, error = packet.ping(port, 0)
     if comm_result != COMM_SUCCESS:
         print("%s" % packet.getTxRxResult(comm_result))
