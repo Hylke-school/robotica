@@ -1,74 +1,53 @@
 import time
 
-import spidev
-from numpy import fft, array, argmax, absolute, delete
+import adafruit_vl53l0x
+import board
+import busio
+from digitalio import DigitalInOut
 
-spi_ch = 0
+# Initialize I2C bus and sensor.
+i2c = busio.I2C(board.SCL, board.SDA)
 
-# Enable SPI
-spi = spidev.SpiDev(0, spi_ch)
-spi.max_speed_hz = 1200000
+xshut = [
+    DigitalInOut(board.D17)
+]
 
-# sampling
-samplingPeriod = 1 / 16384
-sampleSize = 256
+for power_pin in xshut:
+    # make sure these pins are a digital output, not a digital input
+    power_pin.switch_to_output(value=False)
+    # These pins are active when Low, meaning:
+    #   if the output signal is LOW, then the VL53L0X sensor is off.
+    #   if the output signal is HIGH, then the VL53L0X sensor is on.
+# all VL53L0X sensors are now off
 
+vl53 = []
 
-def read_adc(adc_ch):
-    # Make sure ADC channel is 0 or 1
-    if adc_ch != 0:
-        adc_ch = 1
+# now change the addresses of the VL53L0X sensors
+for i, power_pin in enumerate(xshut):
+    # turn on the VL53L0X to allow hardware check
+    power_pin.value = True
+    vl53.insert(i, adafruit_vl53l0x.VL53L0X(i2c))
+    # no need to change the address of the last VL53L0X sensor
+    if i < len(xshut) - 1:
+    # if True:
+        # default address is 0x29. Change that to something else
+        vl53[i].set_address(i + 0x30)  # address assigned should NOT be already in use
 
-    # Construct SPI message
-    #  First bit (Start): Logic high (1)
-    #  Second bit (SGL/DIFF): 1 to select single mode
-    #  Third bit (ODD/SIGN): Select channel (0 or 1)
-    #  Fourth bit (MSFB): 0 for LSB first
-    #  Next 12 bits: 0 (don't care)
-    msg = 0b11
-    msg = ((msg << 1) + adc_ch) << 5
-    msg = [msg, 0b00000000]
-    reply = spi.xfer2(msg)
+# Optionally adjust the measurement timing budget to change speed and accuracy.
+# See the example here for more details:
+#   https://github.com/pololu/vl53l0x-arduino/blob/master/examples/Single/Single.ino
+# For example a higher speed but less accurate timing budget of 20ms:
+# vl53.measurement_timing_budget = 20000
+# Or a slower but more accurate timing budget of 200ms:
+# vl53.measurement_timing_budget = 200000
+# The default timing budget is 33ms, a good compromise of speed and accuracy.
 
-    # Construct single integer out of the reply (2 bytes)
-    adc = 0
-    for n in reply:
-        adc = (adc << 8) + n
+def detect_range(count=500):
+    """ take count=5 samples """
+    while count:
+        for index, sensor in enumerate(vl53):
+            print("Sensor {} Range: {}mm".format(index + 1, sensor.range))
+        time.sleep(1.0)
+        count -= 1
 
-    # Last bit (0) is not part of ADC value, shift to remove it
-    adc = adc >> 1
-
-    return adc
-
-
-# Report the channel 0 and channel 1 voltages to the terminal
-try:
-    while True:
-        # adc = read_adc(0)
-        # print(adc)
-        samples = []
-        for i in range(sampleSize):
-            samples.append(read_adc(0))
-            time.sleep(samplingPeriod)
-        samples = array(samples)
-
-        spectrum = fft.rfft(samples)
-        spectrum = delete(spectrum, 0)
-
-        results = absolute(spectrum)
-        freq = fft.rfftfreq(n=sampleSize, d=samplingPeriod)
-
-        index = argmax(results)
-        frequency = freq[index]
-        frequency = frequency - (frequency * 0.66)
-        print("frequency = " + str(frequency))
-        # plt.plot(freq, results)
-        # plt.xlabel("frequency, Hz")
-        # plt.ylabel("Amplitude, units")
-        # plt.show()
-        # time.sleep(0.2)
-
-
-finally:
-    # GPIO.cleanup()
-    print("success?")
+detect_range()
