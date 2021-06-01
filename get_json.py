@@ -4,7 +4,7 @@ from receive_remote import Socket
 class JSON:
     def __init__(self):
         self.ip = "141.252.29.66"
-        self.port = 5535
+        self.port = 5355
         self.counter = 0
         self.socket = Socket(self.ip, self.port)
         self.socket.start_loop()

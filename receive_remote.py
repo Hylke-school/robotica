@@ -25,5 +25,5 @@ class Socket:
         self.join()
 
     def get_data(self):
-        data = self.data
-        return data
+        #data = self.data
+        return self.data
