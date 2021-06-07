@@ -15,7 +15,7 @@ chartList.push(makeChart("distance2"));
 
 
 interval = window.setInterval(function () {
-    $.get("http://dns.hylke.xyz:5356", function (data, status) {
+    $.get("http://212.204.150.138:5356", function (data, status) {
         if (data.manual === "false"){
             $("body").css("background-color", "#ffaaaa");
             $("#automatic_message").show();
@@ -100,7 +100,7 @@ function toggleCamera(){
         $("#camera").show();
         $("#camera").html(`
             <h2 class="h2">Camera Livestream</h2>
-            <img src="http://141.252.29.66:5000/video_feed">
+            <img src="http://141.252.29.30:5000/video_feed">
         `)
     } else {
         $("#camera").hide();$("#camera").html("")
