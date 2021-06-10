@@ -9,8 +9,8 @@ class Movement:
     engineRight = None
 
     def __init__(self):
-        self.engineLeft = Motor("EngineLeft")
-        self.engineRight = Motor("EngineRight")
+        self.engineLeft = Motor(config.LEFT_MOTOR_ID)
+        self.engineRight = Motor(config.RIGHT_MOTOR_ID)
 
     def update(self, y_left, y_right):
         # (0 - 1023) -> (0 - 512) = backwards -> (512 - 1023) = Forward
@@ -29,22 +29,19 @@ class Movement:
 
 
 class Motor:
-    def __init__(self, engineName):
-        if (engineName == "EngineLeft"):
-            # TODO Change to correct values.
+    def __init__(self, engine_name):
+        self.pi = pigpio.pi()
+        if engine_name == config.LEFT_MOTOR_ID:
+            self.pi.set_PWM_frequency(config.LEFT_MOTOR_PWM, 500)
             self.pwmPin = config.LEFT_MOTOR_PWM
             self.inA = config.LEFT_MOTOR_A
             self.inB = config.LEFT_MOTOR_B
 
-        elif (engineName == "EngineRight"):
-            # TODO Change to correct values.
+        elif engine_name == config.RIGHT_MOTOR_ID:
+            self.pi.set_PWM_frequency(config.RIGHT_MOTOR_PWM, 500)
             self.pwmPin = config.RIGHT_MOTOR_PWM
             self.inA = config.RIGHT_MOTOR_A
             self.inB = config.RIGHT_MOTOR_B
-
-        self.pi = pigpio.pi()
-        self.pi.set_PWM_frequency(config.LEFT_MOTOR_PWM, 500)
-        self.pi.set_PWM_frequency(config.RIGHT_MOTOR_PWM, 500)
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pwmPin, GPIO.OUT)

@@ -14,6 +14,7 @@ class RemoteController:
         self.thread.start()
 
     def __loop(self):
+        """"""
         while True:
             self.data, address = self.sock.recvfrom(1024)
 
