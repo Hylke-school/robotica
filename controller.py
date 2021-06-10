@@ -1,5 +1,5 @@
 # from shutdown.main import Shutdown
-from loadcell import LoadCell
+from load_cell import LoadCell
 import config
 from movement import Movement
 from remote_controller import RemoteController
@@ -14,8 +14,8 @@ import requests
 import config
 import os
 
-movement = Movement()
 remote_controller = RemoteController()
+movement = Movement()
 microphone = Microphone()
 distance_sensor = DistanceSensor()
 loadcell = LoadCell()
@@ -30,8 +30,8 @@ def loop():
     print(payload)
     if payload is not None:
         data = json.loads(payload.decode("utf-8"))
-        # data["weight"] = loadcell.readscale()
-        # data["microphone"] = microphone.get_data()
+        data[config.WEIGHT] = loadcell.read_scale()
+        data[config.MICROPHONE] = microphone.get_data()
         time.sleep(0.1)
 
         if data[config.POWER]:
