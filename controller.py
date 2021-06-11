@@ -3,9 +3,10 @@ from load_cell import LoadCell
 import config
 from movement import Movement
 from remote_controller import RemoteController
-from microphone import Microphone
+# from microphone import Microphone
 from distance_sensor import DistanceSensor
 from vision import Vision
+from servo import Hand, Neck, Lift
 
 import RPi.GPIO as GPIO
 import time
@@ -15,11 +16,16 @@ import config
 import os
 
 remote_controller = RemoteController()
+
 movement = Movement()
-microphone = Microphone()
+# hand = Hand()
+# neck = Neck()
+# lift = Lift()
+
+# microphone = Microphone()
 distance_sensor = DistanceSensor()
-loadcell = LoadCell()
-vision = Vision()
+# loadcell = LoadCell()
+# vision = Vision()
 
 ip = config.TELEMETRY_IP
 port = config.TELEMETRY_PORT
@@ -30,15 +36,24 @@ def loop():
     print(payload)
     if payload is not None:
         data = json.loads(payload.decode("utf-8"))
-        data[config.WEIGHT] = loadcell.read_scale()
-        data[config.MICROPHONE] = microphone.get_data()
+        # data[config.WEIGHT] = loadcell.read_scale()
+        # data[config.MICROPHONE] = microphone.get_data()
         time.sleep(0.1)
 
         if data[config.POWER]:
             os.system("sudo shutdown -h now")
 
+        if data[config.NECK]:
+            pass
+            # neck.neckPos(100)
+        else:
+            pass
+            # neck.neckPos(0)
+
         if not data[config.MANUAL]:  # Manually controlling the robot...
             movement.update(data[config.Y_LEFT], data[config.Y_RIGHT])
+            # hand.moveHand(data[config.X_LEFT])
+            # lift.move_lift(data[config.X_RIGHT])
 
         else:
             if data[config.AUTO_MODE] == config.AUTO_MODE_SINGLE:

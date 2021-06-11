@@ -8,6 +8,15 @@ import pigpio
 servos = Ax12()
 
 
+def angleToPosition(angle):
+    """map angle van -150° naar 150° --> 0 naar 1023"""
+    return math.floor((angle + 150.) / 300. * 1023.)
+
+
+def map_value(value, in_min, in_max, out_min, out_max):
+    return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min
+
+
 class Neck:
     def __init__(self):
         self.bottomID = config.NECK_ID
@@ -15,8 +24,8 @@ class Neck:
         self.currentLevel = 0
         self.headPos = 0
         self.neckPos = 0
-        servos.moveSpeed(0, 100)
-        servos.moveSpeed(1, 100)
+        servos.moveSpeed(self.bottomID, 100)
+        servos.moveSpeed(self.topID, 100)
         self.move_head(0)
         self.change_position(0)
 
@@ -53,17 +62,12 @@ class Neck:
         self.move_head(self.headPos + dAngle)
 
 
-def angleToPosition(angle):
-    """map angle van -150° naar 150° --> 0 naar 1023"""
-    return math.floor((angle + 150.) / 300. * 1023.)
-
-
 class Hand:
     def __init__(self):
-        self.handID = config.HEAD_ID
-        self.currentPos = 650
-        self.openHand(25)
-        servos.moveSpeed(self.handID, 80)
+        self.handID = config.HAND_ID
+        self.currentPos = config.HAND_OPEN
+        self.openHand(config.HAND_OPEN_SPEED)
+        servos.moveSpeed(self.handID, config.HAND_MOVE_SPEED)
 
     def readLoad(self):
         """leest en print de huidige torque van de servo"""
@@ -107,8 +111,19 @@ class Hand:
             self.closeHand(abs(mappedInput))
         elif mappedInput > 0:
             self.openHand(mappedInput)
-        self.currentPos = config.pos
-        servos.move(self.handID, config.pos)
+        self.currentPos = servos.readPosition(self.handID)
+
+
+class Lift:
+    def __init__(self):
+        self.liftID = config.LIFT_ID
+
+    def move_lift(self, speed):
+        speed = map_value(speed, 0, 1023, 0, 2047)
+        if abs(servos.readLoad(self.liftID) - 1023) < 900:
+            servos.moveSpeed(self.liftID, speed)
+        else:
+            servos.moveSpeed(self.liftID, 1024)
 
 
 class Eyebrows:
