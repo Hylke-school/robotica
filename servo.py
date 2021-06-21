@@ -21,13 +21,13 @@ class Neck:
     def __init__(self):
         self.bottomID = config.NECK_ID
         self.topID = config.HEAD_ID
-        self.currentLevel = 0
+        self.currentLevel = 100
         self.headPos = 0
         self.neckPos = 0
-        servos.moveSpeed(self.bottomID, 100)
-        servos.moveSpeed(self.topID, 100)
+        servos.moveSpeed(self.bottomID, 50)
+        servos.moveSpeed(self.topID, 50)
         self.move_head(0)
-        self.change_position(0)
+        self.change_position(100)
 
     def stepNeck(self, dLevel):
         """
@@ -65,37 +65,37 @@ class Neck:
 class Hand:
     def __init__(self):
         self.handID = config.HAND_ID
-        self.currentPos = config.HAND_OPEN
-        self.openHand(config.HAND_OPEN_SPEED)
+        servos.setCWAngleLimit(self.handID, config.HAND_CLOSED)
+        servos.setCCWAngleLimit(self.handID, config.HAND_OPEN)
         servos.moveSpeed(self.handID, config.HAND_MOVE_SPEED)
+        self.currentPos = config.HAND_OPEN
+        servos.move(self.handID, config.HAND_OPEN)
 
     def readLoad(self):
         """leest en print de huidige torque van de servo"""
-        print(servos.readLoad(self.handID))
+        print("current load is: {}".format(servos.readLoad(self.handID)))
 
     def readPos(self):
         """leest en print de huidige positie van de servo"""
         print(servos.readPosition(self.handID))
 
-    # open = 650
-    # dicht = 1023
-
-    def openHand(self, movespeed):
-        if (self.currentPos - movespeed) >= config.HAND_OPEN:
-            servos.move(self.handID, self.currentPos - movespeed)
-        else:
-            servos.move(self.handID, config.HAND_OPEN)
-        self.currentPos = servos.readPosition(self.handID)
+    # open = 620
+    # dicht = 210
 
     def closeHand(self, movespeed):
-        if servos.readLoad(self.handID) - 1023 < 900:
-            if (self.currentPos + movespeed) <= config.HAND_CLOSED:
-                servos.move(self.handID, self.currentPos + movespeed)
-            else:
-                servos.move(self.handID, config.HAND_CLOSED)
-        self.currentPos = servos.readPosition(self.handID)
+        # if (self.currentPos - movespeed) >= config.HAND_CLOSED:
+        #     # if self.loadCheck -1024 / 1024 < 0.98:
+        #     self.currentPos -= movespeed
+        #     servos.move(self.handID, int(self.currentPos))
+        servos.move(self.handID, 485)
 
-    def moveHand(self, input):
+    def openHand(self, movespeed):
+        if (self.currentPos + movespeed) <= config.HAND_OPEN:
+            if self.loadCheck/1024 < 0.9:
+                self.currentPos+=movespeed                   
+                servos.move(self.handID, int(self.currentPos))
+
+    def move_hand(self, input):
         """
         input van 0 - 1023
         
@@ -105,55 +105,73 @@ class Hand:
 
         0 - 16 ==> langzaam -> snel open
         """
-
-        mappedInput = (input - 512) / 32
-        if mappedInput < 0:
-            self.closeHand(abs(mappedInput))
-        elif mappedInput > 0:
-            self.openHand(mappedInput)
+        # print (input)
+        self.loadCheck = servos.readLoad(self.handID)
         self.currentPos = servos.readPosition(self.handID)
-
+        if (self.loadCheck is not None) and (self.currentPos is not None):
+            mappedInput = (input - 512) / 20
+            if mappedInput < -4:
+                self.closeHand(abs(mappedInput))
+            elif mappedInput > 0:
+                self.openHand(mappedInput)
 
 class Lift:
     def __init__(self):
         self.liftID = config.LIFT_ID
+        # servos.setAngleLimit(self.liftID, 0, 0)
+        servos.moveSpeed(self.liftID, 0)
+        servos.setCWAngleLimit(self.liftID, 0)
+        servos.setCCWAngleLimit(self.liftID, 0)
+
 
     def move_lift(self, speed):
-        speed = map_value(speed, 0, 1023, 0, 2047)
-        if abs(servos.readLoad(self.liftID) - 1023) < 900:
-            servos.moveSpeed(self.liftID, speed)
+        speed = abs(1023-speed)
+        if speed < 0 or speed > 1023:
+            raise IndexError("speed out of range")
+        # map speed from 0-1023 to 0-2047. Voor de servos 0 is CCW max snelheid aflopend naar 512. 513 is bewegend in de CW richting oplopend tot 1023
+        if speed//512:
+            speed *= 2
         else:
-            servos.moveSpeed(self.liftID, 1024)
+            speed = -2 * speed + 1023
+        # self.checkLoad = servos.readLoad(self.liftID)
+        # if self.checkLoad is not None:
+        #     if self.checkLoad - 1024 < 512:
+        servos.moveSpeed(self.liftID, int(speed))
+        #     else:
+        #         servos.moveSpeed(self.liftID, 1024)
 
 
 class Eyebrows:
     def __init__(self):
-        self.left_eyebrow = Eyebrow(config.EYEBROW_ID_LEFT)
-        self.right_eyebrow = Eyebrow(config.EYEBROW_ID_RIGHT)
-
-    def set_position(self, position):
-        """
-            0 = eyebrows completely down
-            100 = eyebrows completely up
-        """
-        self.left_eyebrow.set_position(position)
-        self.right_eyebrow.set_position(-1 * position)
-
-
-class Eyebrow:
-    def __init__(self, eyebrow_id):
-        self.pi = pigpio.pi()
-        if eyebrow_id == config.EYEBROW_ID_LEFT:
-            self.pwmPin = config.LEFT_EYEBROW_PWM
-            self.pi.set_PWM_frequency(config.LEFT_EYEBROW_PWM, config.EYEBROW_PWM_FREQUENCY)
-
-        elif eyebrow_id == config.EYEBROW_ID_RIGHT:
-            self.pwmPin = config.RIGHT_EYEBROW_PWM
-            self.pi.set_PWM_frequency(config.RIGHT_EYEBROW_PWM, config.EYEBROW_PWM_FREQUENCY)
-
+        # Declare PWM usage on non-hardware PWM pins. (PWM(Pin_Number, Frequency))\
         GPIO.setmode(GPIO.BCM)
-        GPIO.setup(self.pwmPin, GPIO.OUT)
+        GPIO.setup(config.EYEBROW_ID_LEFT, GPIO.OUT)
+        GPIO.setup(config.EYEBROW_ID_RIGHT, GPIO.OUT)
+        self.p1 = GPIO.PWM(config.EYEBROW_ID_LEFT, 50)
+        self.p2 = GPIO.PWM(config.EYEBROW_ID_RIGHT, 50)
+        self.p1.start(0.2)
+        self.p2.start(0.2)
 
-    def set_position(self, position):
-        # TODO: make position actually move eyebrows to right position
-        self.pi.set_PWM_dutycycle(self.pwmPin, position)
+    def change_position(self, position):
+        # """
+        #     0 = eyebrows completely down
+        #     100 = eyebrows completely up
+        # """
+        """
+            Dutycycle starts at 2, finishing at 12. 
+            2 = Eyebrows duty cycle at 0%
+            12 = Eyebrows duty cycle at 100%
+            2-12 = 10 'DutyCycle Microseconds'
+
+            Eyebrow 1 takes normal position, eyebrow 2 is a mirrored version of p1. 
+        """
+        new_position = map_value(position, 0, 100, 2, 12)
+        # print (new_position)
+        self.p1.ChangeDutyCycle (new_position)
+        new_position = 12+2-new_position
+        # print (new_position)
+        self.p2.ChangeDutyCycle (new_position)
+        sleep(0.2)
+        self.p1.ChangeDutyCycle (0)
+        self.p2.ChangeDutyCycle (0)
+        sleep(0.2)

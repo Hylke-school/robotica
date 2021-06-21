@@ -20,6 +20,7 @@ class Movement:
         y_right -= 512
         y_right = self.map_value(y_right, -512, 512, -255, 255)
         sleep(0.05)
+        print("y_left: {}, y_right: {}".format(y_left, y_right))
         self.engineLeft.set_speed(y_left)
         self.engineRight.set_speed(y_right)
 
@@ -47,16 +48,18 @@ class Motor:
         GPIO.setup(self.pwmPin, GPIO.OUT)
         GPIO.setup(self.inA, GPIO.OUT)
         GPIO.setup(self.inB, GPIO.OUT)
+        self.pi.set_PWM_dutycycle(self.pwmPin, 0)
 
+    
     def set_speed(self, speed):
         if speed > 5:
             # forwards
-            GPIO.output(self.inA, GPIO.HIGH)
-            GPIO.output(self.inB, GPIO.LOW)
-        elif speed < -5:
-            # backwards
             GPIO.output(self.inA, GPIO.LOW)
             GPIO.output(self.inB, GPIO.HIGH)
+        elif speed < -5:
+            # backwards
+            GPIO.output(self.inA, GPIO.HIGH)
+            GPIO.output(self.inB, GPIO.LOW)
 
         current_pwm = self.pi.get_PWM_dutycycle(self.pwmPin)
         speed = abs(speed)
@@ -65,7 +68,7 @@ class Motor:
             difference = 0
 
         if abs(difference) > 20:
-            current_pwm += difference / 10
+            current_pwm += difference / 5
         else:
             current_pwm = speed
         self.pi.set_PWM_dutycycle(self.pwmPin, current_pwm)  # 0 - 255

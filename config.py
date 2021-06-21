@@ -18,17 +18,19 @@ RIGHT_MOTOR_A = 24
 RIGHT_MOTOR_B = 25
 
 # REMOTE CONTROLLER INPUTS
-X_LEFT = "x_l"
-Y_LEFT = "y_l"
-X_RIGHT = "x_r"
-Y_RIGHT = "y_r"
-CLICK_LEFT = "c_l"
-CLICK_RIGHT = "c_r"
-POWER = "p"
-MANUAL = "m"
-HAND = "claw"
-NECK = "neck"
-AUTO_MODE = "mode"
+X_LEFT = "x_l"                  # 0 - 1023
+Y_LEFT = "y_l"                  # 0 - 1023
+X_RIGHT = "x_r"                 # 0 - 1023
+Y_RIGHT = "y_r"                 # 0 - 1023
+CLICK_LEFT = "c_l"              # bool
+CLICK_RIGHT = "c_r"             # bool
+POWER = "p"                     # bool
+MANUAL = "m"                    # bool
+HAND = "claw"                   # bool
+NECK = "neck"                   # bool
+AUTO_MODE = "mode"              # string
+
+# DIFFERENT STRING VALUES FOR AUTO_MODE
 AUTO_MODE_SINGLE = "single"
 AUTO_MODE_LINE = "line"
 AUTO_MODE_CAPS = "caps"
@@ -40,22 +42,29 @@ MICROPHONE = "microphone"
 
 # SERVO VARIABLES
 HEAD_ID = 0
-NECK_ID = 1
-HAND_ID = 11
-# TODO: LIFT_ID = idk
-HAND_OPEN = 650
-HAND_CLOSED = 1023
+NECK_ID = 12
+HAND_ID = 3 #11
+LIFT_ID = 9
+NECK_STATUS = True
+HAND_OPEN = 660
+HAND_CLOSED = 375
 HAND_STEP_SPEED = 25
 HAND_OPEN_SPEED = 25
 HAND_MOVE_SPEED = 80
 
-
 EYEBROW_PWM_FREQUENCY = 50
-LEFT_EYEBROW_ID = 0
-RIGHT_EYEBROW_ID = 1
+EYEBROW_ID_LEFT = 12
+EYEBROW_ID_RIGHT = 13
 
 # LOAD CELL VARIABLES
 SCALE_DAT = 20
 SCALE_CLK = 21
-SCALE_OFFSET = 0    # TODO: Change to correct value.
-SCALE_RATIO = 0     # TODO: Change to correct value. (Measured weight / real item weight)
+SCALE_OFFSET = 8027144.375    # TODO: Change to correct value.
+SCALE_RATIO = -1078.9052287581699     # TODO: Change to correct value. (Measured weight / real item weight)
+
+# MICROPHONE VARIABLES
+ADC_CHANNEL = 0
+SPI_BUS = 0
+SPIDEV_BAUD_RATE = 1200000
+MIC_SAMPLE_SIZE = 256
+MIC_SAMPLING_PERIOD = 1 / 16384

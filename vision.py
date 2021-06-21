@@ -5,7 +5,8 @@ import cv2
 import numpy as np
 from flask import Response, render_template, Flask
 
-app = Flask(__name__)
+
+# app = Flask(__name__)
 
 
 class Vision:
@@ -13,23 +14,33 @@ class Vision:
         self.blueBrick_Position = None
         self.cap_x = None
         self.cap_y = None
-        app.run(debug=False, host=config.ROBOT_IP)
+
         self.thread = None
-        self.thread = threading.Thread(target=self.blueBrick(), daemon=True)
+        self.thread = threading.Thread(target=self.find_blue_brick, daemon=True)
         self.thread.start()
 
-    def blueBrick(self):
+    def __loop(self):
+        # app.run(debug=False, host=config.ROBOT_IP)
+        # print("test2")
+        self.find_blue_brick()
+
+    def find_blue_brick(self):
         cap = cv2.VideoCapture(0)
         cap_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
         cap_width_middle = cap_width / 2
         cap_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+        average_position = np.array([512, 512, 512, 512, 512])
+        array_count = 0
+
         while True:
+            # print(array_count)
             _, frame = cap.read()
             # Convert to HSV color space
             hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
             # Setting the lower and upper color border
-            lower_blue = np.array([100, 80, 50])
-            upper_blue = np.array([110, 255, 255])
+            lower_blue = np.array([90, 160, 30])
+            upper_blue = np.array([140, 255, 255])
             # Making a mask
             mask_blue = cv2.inRange(hsv, lower_blue, upper_blue)
             # Gets only the objects that are blue
@@ -41,20 +52,54 @@ class Vision:
             # Finding the contours
             contours, _ = cv2.findContours(trash, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
 
-            for cnt in contours:
-                if cv2.contourArea(cnt) <= 500:
-                    continue
-                # Gets the position of the contour through drawing a rectangle around it
-                x, y, w, h = cv2.boundingRect(cnt)
-                self.blueBrick_Position = ((x + (w / 2)) / cap_width) * 1023
+            # if len(contours) == 0:
+            #     self.blueBrick_Position = 512
 
-                # Draws a rectangle
-                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            # self.blueBrick_Position = 512
+
+            contour_size = 0
+            biggest_contour = None
+
+            for cnt in contours:
+                x, y, w, h = cv2.boundingRect(cnt)
+                factor = (w * 2) / h
+                if factor > 0.8:
+                    continue
+                if cv2.contourArea(cnt) > contour_size:
+                    biggest_contour = cnt
+                    contour_size = cv2.contourArea(biggest_contour)
+
+            if contour_size > 50:
+                x, y, w, h = cv2.boundingRect(biggest_contour)
+                position = ((x + (w / 2)) / cap_width) * 1023
+                if (position >= 492) and (position <= 532):
+                    position = 512
+                # print(position)
+                if position > 512:
+                    # self.blueBrick_Position = 1023
+                    average_position[array_count] = 1023
+                elif position < 512:
+                    # self.blueBrick_Position = 0
+                    average_position[array_count] = 0
+            else:
+                # self.blueBrick_Position = 512
+                average_position[array_count] = 512
+
+            if array_count > 3:
+                array_count = 0
+            else:
+                array_count += 1
+
+            self.blueBrick_Position = np.average(average_position)
+
+            # Draws a rectangle
+            # cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
             # Draws a vertical line
-            cv2.line(frame, (cap_width_middle, 0), (cap_width_middle, cap_height), (0, 255, 0), 2)
-            cv2.imshow('window', frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
-                break
+            # cv2.line(frame, (int(cap_width_middle), 0), (int(cap_width_middle), int(cap_height)), (0, 255, 0), 2)
+            # cv2.imshow('window', frame)
+            # ret, buffer = cv2.imencode('.jpg', frame)
+            # frame = buffer.tobytes()
+            # yield b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n'
 
     def stop_vision_bluebrick(self):
         self.thread.join()
@@ -62,7 +107,7 @@ class Vision:
     def get_blue_brick_position(self):
         return self.blueBrick_Position
 
-    def findCap(self):
+    def find_cap(self):
         cap = cv2.VideoCapture(0)
         cap_width_middle = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) / 2)
         cap_height_middle = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) / 2)
@@ -142,10 +187,10 @@ class Vision:
             frame = buffer.tobytes()
             yield b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n'
 
-    @app.route('/')
-    def index(self):
-        return render_template('index.html')
-
-    @app.route('/video_feed')
-    def video_feed(self):
-        return Response(self.findCap(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    # @app.route('/')
+    # def index(self):
+    #     return render_template('index.html')
+    #
+    # @app.route('/video_feed')
+    # def video_feed(self):
+    #     return Response(self.find_blue_brick(), mimetype='multipart/x-mixed-replace; boundary=frame')

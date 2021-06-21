@@ -6,9 +6,10 @@ import time
 spi = spidev.SpiDev(config.SPI_BUS, config.ADC_CHANNEL)
 spi.max_speed_hz = config.SPIDEV_BAUD_RATE
 
+
 class Microphone:
     def __init__(self):
-        
+
         pass
 
     @staticmethod
@@ -37,7 +38,7 @@ class Microphone:
         adc = adc >> 1
 
         return adc
-        
+
     def get_data(self):
         # adc = read_adc(0)
         # print(adc)

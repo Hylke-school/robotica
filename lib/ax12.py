@@ -93,6 +93,8 @@ class Ax12:
     AX_TL_LENGTH = 4
     AX_VL_LENGTH = 6
     AX_AL_LENGTH = 7
+    AX_CW_AL_LENGTH = 5
+    AX_CCW_AL_LENGTH = 5
     AX_CM_LENGTH = 6
     AX_CS_LENGTH = 5
     AX_COMPLIANCE_LENGTH = 7
@@ -139,7 +141,7 @@ class Ax12:
     def __init__(self):
         if (Ax12.port is not None):
             Ax12.port.close()
-        Ax12.port = Serial("/dev/ttyAMA0", baudrate=1000000, timeout=3.0)
+        Ax12.port = Serial("/dev/ttyAMA0", baudrate=1000000, timeout=0.5)
         if (not Ax12.gpioSet):
             GPIO.setwarnings(False)
             GPIO.setmode(GPIO.BCM)
@@ -175,12 +177,13 @@ class Ax12:
         self.direction(Ax12.RPI_DIRECTION_RX)
         reply = Ax12.port.read(5)  # [0xff, 0xff, origin, length, error]
         try:
-            # assert ord(reply[0]) == 0xFF
+            #assert ord(reply[0]) == 0xFF
             assert reply[0] == 0xFF
         except:
+            #self.readData(id)
             e = "Timeout on servo " + str(id)
-            # print(reply)
-            raise Ax12.timeoutError(e)
+            print(reply)
+            #raise Ax12.timeoutError(e)
 
         try:
             # length = ord(reply[3]) - 2
@@ -348,6 +351,7 @@ class Ax12:
         Ax12.port.write(outData)
         sleep(Ax12.TX_DELAY_TIME)
         return self.readData(id)
+        # return
 
     def moveSpeed(self, id, speed):
         self.direction(Ax12.RPI_DIRECTION_TX)
@@ -519,6 +523,44 @@ class Ax12:
         sleep(Ax12.TX_DELAY_TIME)
         return self.readData(id)
 
+    def setCWAngleLimit(self, id, cwLimit):
+        self.direction(Ax12.RPI_DIRECTION_TX)
+        Ax12.port.flushInput()
+        Ax12.port.reset_input_buffer()
+        cw = [cwLimit & 0xff, cwLimit >> 8]
+        checksum = (~(id + Ax12.AX_CW_AL_LENGTH + Ax12.AX_WRITE_DATA + Ax12.AX_CW_ANGLE_LIMIT_L + cw[0] + cw[1])) & 0xff
+        outData = bytes([Ax12.AX_START])
+        outData += bytes([Ax12.AX_START])
+        outData += bytes([id])
+        outData += bytes([Ax12.AX_CW_AL_LENGTH])
+        outData += bytes([Ax12.AX_WRITE_DATA])
+        outData += bytes([Ax12.AX_CW_ANGLE_LIMIT_L])
+        outData += bytes([cw[0]])
+        outData += bytes([cw[1]])
+        outData += bytes([checksum])
+        Ax12.port.write(outData)
+        sleep(Ax12.TX_DELAY_TIME)
+        return self.readData(id)
+
+    def setCCWAngleLimit(self, id, ccwLimit):
+        self.direction(Ax12.RPI_DIRECTION_TX)
+        Ax12.port.flushInput()
+        Ax12.port.reset_input_buffer()
+        ccw = [ccwLimit & 0xff, ccwLimit >> 8]
+        checksum = (~(id + Ax12.AX_CCW_AL_LENGTH + Ax12.AX_WRITE_DATA + Ax12.AX_CCW_ANGLE_LIMIT_L + ccw[0] + ccw[1])) & 0xff
+        outData = bytes([Ax12.AX_START])
+        outData += bytes([Ax12.AX_START])
+        outData += bytes([id])
+        outData += bytes([Ax12.AX_CCW_AL_LENGTH])
+        outData += bytes([Ax12.AX_WRITE_DATA])
+        outData += bytes([Ax12.AX_CCW_ANGLE_LIMIT_L])
+        outData += bytes([ccw[0]])
+        outData += bytes([ccw[1]])
+        outData += bytes([checksum])
+        Ax12.port.write(outData)
+        sleep(Ax12.TX_DELAY_TIME)
+        return self.readData(id)
+
     def setTorqueLimit(self, id, torque):
         self.direction(Ax12.RPI_DIRECTION_TX)
         Ax12.port.flushInput()
@@ -570,7 +612,7 @@ class Ax12:
         outData += bytes([Ax12.AX_WRITE_DATA])
         outData += bytes([Ax12.AX_CW_COMPLIANCE_MARGIN])
         outData += bytes([cwMargin])
-        outData += bytes([ccwMArgin])
+        outData += bytes([ccwMargin])
         outData += bytes([cwSlope])
         outData += bytes([ccwSlope])
         outData += bytes([checksum])
