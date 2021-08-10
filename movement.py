@@ -54,12 +54,12 @@ class Motor:
     def set_speed(self, speed):
         if speed > 5:
             # forwards
-            GPIO.output(self.inA, GPIO.LOW)
-            GPIO.output(self.inB, GPIO.HIGH)
-        elif speed < -5:
-            # backwards
             GPIO.output(self.inA, GPIO.HIGH)
             GPIO.output(self.inB, GPIO.LOW)
+        elif speed < -5:
+            # backwards
+            GPIO.output(self.inA, GPIO.LOW)
+            GPIO.output(self.inB, GPIO.HIGH)
 
         current_pwm = self.pi.get_PWM_dutycycle(self.pwmPin)
         speed = abs(speed)

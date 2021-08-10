@@ -82,17 +82,23 @@ class Hand:
     # open = 620
     # dicht = 210
 
+    def open_fully(self):
+        servos.move(self.handID, config.HAND_OPEN)
+
+    def close_fully(self):
+        servos.move(self.handID, config.HAND_CLOSED)
+
     def closeHand(self, movespeed):
         # if (self.currentPos - movespeed) >= config.HAND_CLOSED:
         #     # if self.loadCheck -1024 / 1024 < 0.98:
         #     self.currentPos -= movespeed
         #     servos.move(self.handID, int(self.currentPos))
-        servos.move(self.handID, 485)
+        servos.move(self.handID, 450)
 
     def openHand(self, movespeed):
         if (self.currentPos + movespeed) <= config.HAND_OPEN:
-            if self.loadCheck/1024 < 0.9:
-                self.currentPos+=movespeed                   
+            if self.loadCheck / 1024 < 0.9:
+                self.currentPos += movespeed
                 servos.move(self.handID, int(self.currentPos))
 
     def move_hand(self, input):
@@ -115,6 +121,7 @@ class Hand:
             elif mappedInput > 0:
                 self.openHand(mappedInput)
 
+
 class Lift:
     def __init__(self):
         self.liftID = config.LIFT_ID
@@ -123,13 +130,12 @@ class Lift:
         servos.setCWAngleLimit(self.liftID, 0)
         servos.setCCWAngleLimit(self.liftID, 0)
 
-
     def move_lift(self, speed):
-        speed = abs(1023-speed)
+        speed = abs(1023 - speed)
         if speed < 0 or speed > 1023:
             raise IndexError("speed out of range")
         # map speed from 0-1023 to 0-2047. Voor de servos 0 is CCW max snelheid aflopend naar 512. 513 is bewegend in de CW richting oplopend tot 1023
-        if speed//512:
+        if speed // 512:
             speed *= 2
         else:
             speed = -2 * speed + 1023
@@ -167,11 +173,11 @@ class Eyebrows:
         """
         new_position = map_value(position, 0, 100, 2, 12)
         # print (new_position)
-        self.p1.ChangeDutyCycle (new_position)
-        new_position = 12+2-new_position
+        self.p1.ChangeDutyCycle(new_position)
+        new_position = 12 + 2 - new_position
         # print (new_position)
-        self.p2.ChangeDutyCycle (new_position)
+        self.p2.ChangeDutyCycle(new_position)
         sleep(0.2)
-        self.p1.ChangeDutyCycle (0)
-        self.p2.ChangeDutyCycle (0)
+        self.p1.ChangeDutyCycle(0)
+        self.p2.ChangeDutyCycle(0)
         sleep(0.2)

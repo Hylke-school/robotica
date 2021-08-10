@@ -8,62 +8,123 @@ from movement import Movement
 neck = Neck()
 hand = Hand()
 lift = Lift()
-eyebrows = Eyebrows()
 movement = Movement()
 
+
 class Dance:
-    def __init__(self):
-        pass
+    def __init__(self, eyebrows):
+        self.eyebrows = eyebrows
 
-    def single_dance():
-        pass
+    def line_dance(self):
+        self.clapping()
 
-    def line_dance():
-        pass
+    def single_dance(self):
+        self.startPosition()
+        self.intro()
+        self.wiggle(8)
+        self.pirouette(config.PIROUETTE_TIME, True)
+        self.clapping(4)
+        self.pirouette(config.PIROUETTE_TIME, False)
+        self.headbang(3)
+        self.neckbang(2)
+        self.neckAndHeadbang(3)
+        self.pirouette(config.PIROUETTE_TIME, False)
+        self.clapping(4)
+        self.bigCircle(config.BIG_CIRCLE_TIME, True)
+        self.bigCircle(config.BIG_CIRCLE_TIME, False)
+        self.startPosition()
+        self.intro()
 
-    def intro():
-        neck.change_position(50)
+    def line_dance(self, times):
+        self.intro()
+        self.clapping_and_headbang(times)
+
+    def startPosition(self):
+        neck.change_position(25)
+        neck.move_head(60)
         sleep(1)
-        eyebrows.change_position(50)
+        self.eyebrows.change_position(50)
+        sleep(1)
 
+    def intro(self):
+        neck.change_position(100)
+        neck.move_head(0)
+        sleep(2)
 
-        pass
-
-    def pirouette(duration: float, clockwise: bool):
+    def pirouette(self, duration: float, clockwise=True):
         end = time() + duration
         while time() < end:
+            neck.change_position(100)
             if clockwise:
-                movement.update(0, 1023) # Turn Left
+                movement.update(0, 1023)  # Turn Left
             else:
-                movement.update(1023, 0) # Turn Right
-            pass
+                movement.update(1023, 0)  # Turn Right
+        movement.update(512, 512)
 
-    def wiggle(self):
-        self.pirouette(.2, True)
-        sleep(.2)
-        self.pirouette(.4, False)
-        sleep(.4)
-        self.pirouette(.2, True)
-        sleep(.2)
-        pass
+    def bigCircle(self, duration: float, clockwise=True):
+        end = time() + duration
+        while time() < end:
+            neck.change_position(100)
+            if clockwise:
+                movement.update(500, 1023)  # Turn Left
+            else:
+                movement.update(1023, 500)  # Turn Right
+        movement.update(512, 512)
 
-    def headbang(times: int):
+    def wiggle(self, times: int):
+        for i in range(times):
+            neck.change_position(100)
+            self.pirouette(.5, True)
+            sleep(.2)
+            self.pirouette(.5, False)
+            sleep(.4)
+
+    def headbang(self, times: int):
         for i in range(times):
             neck.move_head(45)
             sleep(.7)
             neck.move_head(0)
             sleep(.7)
 
-    def neckbang(times: int):
+    def neckbang(self, times: int):
         for i in range(times):
             neck.change_position(50)
             sleep(.7)
             neck.change_position(100)
             sleep(.7)
 
-    def clapping():
-        hand.closeHand()
-        sleep(.1)
-        hand.openHand()
-        pass
-    
+    def neckAndHeadbang(self, times: int):
+        for i in range(times):
+            neck.change_position(50)
+            neck.move_head(90)
+            sleep(.7)
+            neck.change_position(100)
+            neck.move_head(0)
+            sleep(.7)
+
+    def clapping(self, times: int):
+        hand.open_fully()
+        sleep(1)
+        for i in range(times):
+            hand.open_fully()
+            sleep(1.5)
+            hand.close_fully()
+            sleep(1.5)
+        hand.open_fully()
+
+    def clapping_and_headbang(self, times: int):
+        hand.open_fully()
+        sleep(1)
+        for i in range(times):
+            neck.change_position(100)
+            self.eyebrows.change_position(50)
+            hand.open_fully()
+            sleep(1.2)
+            hand.close_fully()
+            sleep(1.2)
+            neck.change_position(50)
+            self.eyebrows.change_position(80)
+            hand.open_fully()
+            sleep(1.2)
+            hand.close_fully()
+            sleep(1.2)

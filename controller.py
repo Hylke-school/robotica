@@ -1,6 +1,6 @@
 # from shutdown.main import Shutdown
 from config import NECK_STATUS, Y_LEFT
-from load_cell import LoadCell
+# from load_cell import LoadCell
 import config
 from movement import Movement
 from remote_controller import RemoteController
@@ -8,6 +8,7 @@ from microphone import Microphone
 from distance_sensor import DistanceSensor
 from vision import Vision
 from servo import Hand, Neck, Lift, Eyebrows
+from dance import Dance
 # from servo import Neck
 
 import RPi.GPIO as GPIO
@@ -24,10 +25,11 @@ neck = Neck()
 hand = Hand()
 lift = Lift()
 eyebrows = Eyebrows()
+dance = Dance(eyebrows)
 
 # microphone = Microphone()
 distance_sensor = DistanceSensor()
-loadcell = LoadCell()
+# loadcell = LoadCell()
 vision = Vision()
 
 ip = config.TELEMETRY_IP
@@ -38,13 +40,13 @@ def loop():
     payload = remote_controller.get_data()
 
     if payload is not None:
-        #print(payload)
+        # print(payload)
         pass
 
-    # if False:
+        # if False:
         data = json.loads(payload.decode("utf-8"))
         if data[config.AUTO_MODE] == config.AUTO_MODE_SINGLE:
-            data[config.WEIGHT] = loadcell.read_scale()
+            # data[config.WEIGHT] = loadcell.read_scale()
             print(" Weight data:" + str(data[config.WEIGHT]))
 
         # data[config.MICROPHONE] = microphone.get_data()
@@ -53,12 +55,12 @@ def loop():
         # if not data[config.POWER]:
         #     os.system("sudo shutdown -h now")
 
-        if (data[config.NECK]) and (config.NECK_STATUS == False):
+        if (data[config.NECK]) and not config.NECK_STATUS:
             neck.change_position(100)
             eyebrows.change_position(80)
             config.NECK_STATUS = True
-        
-        elif (not data[config.NECK]) and (config.NECK_STATUS == True):
+
+        elif (not data[config.NECK]) and config.NECK_STATUS:
             neck.change_position(0)
             eyebrows.change_position(50)
             config.NECK_STATUS = False
@@ -68,14 +70,15 @@ def loop():
                 # pass
                 hand.move_hand(data[config.Y_RIGHT])
                 lift.move_lift(data[config.Y_LEFT])
-                
+
             else:
                 # pass
                 movement.update(data[config.Y_LEFT], data[config.Y_RIGHT])
 
         else:
             if data[config.AUTO_MODE] == config.AUTO_MODE_SINGLE:
-                # Single Dance... 
+                # Single Dance...
+                dance.single_dance()
                 pass
             elif data[config.AUTO_MODE] == config.AUTO_MODE_LINE:
                 # Line Dance with hearing...
@@ -87,8 +90,9 @@ def loop():
                 # pass
                 position = vision.get_blue_brick_position()
                 # print(position)
-                movement.update(position, abs(1023-position))
+                movement.update(position, abs(1023 - position))
         # r = requests.post("http://" + ip + ":" + port, data=json.dumps(data))
+
 
 # setup()
 try:
